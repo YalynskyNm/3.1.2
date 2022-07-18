@@ -1,14 +1,11 @@
 package ru.kata.spring.boot_security.demo.model;
 
-import org.hibernate.Hibernate;
 import org.hibernate.annotations.Check;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -20,11 +17,11 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "firstname", unique = true)
-    private String firstName;
+    @Column(name = "name", unique = true)
+    private String name;
 
     @Column(name = "lastname")
-    private String lastName;
+    private String lastname;
 
     @Column(name = "age")
     private int age;
@@ -40,12 +37,11 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roleSet;
 
-    public User() {
-    }
+    public User() {}
 
     public User(String firstName, String lastName, int age) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.name = firstName;
+        this.lastname = lastName;
         this.age = age;
     }
 
@@ -63,6 +59,23 @@ public class User implements UserDetails {
         this.roleSet = roleSet;
     }
 
+    public String getStringRoles() {
+        StringBuilder res = new StringBuilder();
+        for (Role role : roleSet) {
+            res.append(role.getName().substring(5)).append(" ");
+        }
+        return res.toString();
+    }
+
+    public String getStringView() {
+        StringBuilder res = new StringBuilder();
+        res.append(this.username).append(" with roles: ");
+        for (Role role : roleSet) {
+            res.append(role.getName().substring(5)).append(" ");
+        }
+        return res.toString();
+    }
+
     public long getId() {
         return id;
     }
@@ -71,20 +84,20 @@ public class User implements UserDetails {
         this.id = id;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getName() {
+        return name;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setName(String firstName) {
+        this.name = firstName;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getLastname() {
+        return lastname;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setLastname(String lastName) {
+        this.lastname = lastName;
     }
 
     public int getAge() {
@@ -136,18 +149,5 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        User user = (User) o;
-        return Objects.equals(id, user.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
     }
 }
