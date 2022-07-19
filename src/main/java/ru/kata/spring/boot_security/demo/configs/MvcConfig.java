@@ -1,4 +1,4 @@
-package com.example.configs;
+package ru.kata.spring.boot_security.demo.configs;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
