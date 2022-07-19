@@ -73,16 +73,10 @@ public class UserController {
     }
 
     @PatchMapping("/admin/user/{id}")
-    public String editUser(@ModelAttribute("user") User user, @RequestParam("allRoles") String[] roles) {
-        try {
-            Set<Role> roleSet = Arrays.stream(roles)
-                    .map(roleService::getRoleByName)
-                    .collect(Collectors.toSet());
-            userService.update(user, roleSet);
-        } catch (Exception e) {
-
-        }
+    public String editUser(Model model, @PathVariable("id") int id) {
+        model.addAttribute("user", userService.getUserById(id));
         return "redirect:/admin";
+
     }
 
     @DeleteMapping("/{id}")
