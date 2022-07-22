@@ -57,20 +57,7 @@ public class UserController {
         return "redirect:/admin";
     }
 
-    @GetMapping("/admin/user/{id}/edit")
-    public String editUserForm(@PathVariable("id") long id, Model model) {
-        User user = userService.getUserById(id);
-        List<Role> allRoles = roleService.findAll();
-        Set<Role> set = user.getRoleSet();
-        List<Role> list = new ArrayList<>();
-        for (Role role : set) {
-            list.add(role);
-        }
-        model.addAttribute("user", user);
-        model.addAttribute("allRoles", allRoles);
-        model.addAttribute("userRoles", list);
-        return "edit";
-    }
+
 
     @PatchMapping("/admin/user/{id}")
     public String editUser(Model model, @PathVariable("id") int id) {

@@ -8,6 +8,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.repository.RoleRepository;
@@ -16,16 +19,18 @@ import ru.kata.spring.boot_security.demo.repository.UserRepository;
 import javax.annotation.PostConstruct;
 import java.util.*;
 
-@Transactional
 @Service
 public class UserServiceImpl implements UserService {
 
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private RoleRepository roleRepository;
+    private final RoleRepository roleRepository;
+
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository) {
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+    }
 
     @Override
     public void add(User user) {
@@ -62,7 +67,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll();
     }
 
-    @Override
+
     public User getUserById(long id) {
         return userRepository.getUserById(id);
     }
@@ -84,5 +89,19 @@ public class UserServiceImpl implements UserService {
             grantedAuthorities.add(new SimpleGrantedAuthority(role.getName()));
         }
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), grantedAuthorities);
+    }
+    @GetMapping("/admin/user/{id}/edit")
+    public String editUserForm(@PathVariable("id") long id, Model model) {
+        User user = UserService.getUserById(id);
+        List<Role> allRoles = RoleService.findAll();
+        Set<Role> set = user.getRoleSet();
+        List<Role> list = new ArrayList<>();
+        for (Role role : set) {
+            list.add(role);
+        }
+        model.addAttribute("user", user);
+        model.addAttribute("allRoles", allRoles);
+        model.addAttribute("userRoles", list);
+        return "edit";
     }
 }
