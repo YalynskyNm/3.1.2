@@ -16,11 +16,14 @@ import java.util.stream.Collectors;
 @Controller
 public class UserController {
 
-    @Autowired
-    private RoleService roleService;
+    private final RoleService roleService;
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+    public UserController(RoleService roleService, UserService userService) {
+        this.roleService = roleService;
+        this.userService = userService;
+    }
 
     @GetMapping(value = "/admin")
     public String listUsers(Model model) {
